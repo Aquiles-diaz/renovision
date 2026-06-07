@@ -251,12 +251,14 @@ try {
 const canvas = renderer.domElement;
 const onLost = (event) => {
   event.preventDefault();          // REQUIRED so 'restored' can fire later [CITED: MDN webglcontextlost]
-  cancelAnimationFrame(stateRef.current.raf);
+  cancelAnimationFrame(stateRef.current.raf);   // NOTE: must target the LIVE frame id — keep stateRef.current.raf updated each frame inside animate(), or cancel the local `raf` directly
   setNo3D(true);                   // show 2D fallback instead of white/frozen canvas
 };
 const onRestored = () => {
   setNo3D(false);
-  // re-init scene/renderer or re-run mount effect (e.g. via a key bump) to rebuild GPU resources
+  // re-init scene/renderer: bump a reinitKey so the keyed GL subcomponent REMOUNTS and its
+  // mount effect (deps []) re-runs, recreating renderer/scene/group. setNo3D(false) alone
+  // does NOT rebuild GPU resources (the [] effect won't re-run). RESOLVED → key-bump remount.
 };
 canvas.addEventListener("webglcontextlost", onLost, false);
 canvas.addEventListener("webglcontextrestored", onRestored, false);
@@ -265,12 +267,17 @@ canvas.addEventListener("webglcontextrestored", onRestored, false);
 
 **Key facts:**
 - `webglcontextlost` MUST call `event.preventDefault()` or the context will never be restored [CITED: MDN WebGLContextEvent / webglcontextlost].
-- On context loss, all GPU resources (geometries, textures, programs) are invalid; you must rebuild them on restore — the simplest robust path here is to re-run the whole `Viewer3D` mount effect by bumping a React `key` on the component when `onRestored` fires.
+- On context loss, all GPU resources (geometries, textures, programs) are invalid; you must rebuild them on restore — the robust path here is to re-run the whole GL mount effect by bumping a React `key` on a keyed GL subcomponent (or canvas wrapper) when `onRestored` fires. Because `Viewer3D` is rendered without a key and its mount effect has `[]` deps, the effect will NOT re-run from `setNo3D(false)` alone; a key bump is required to recreate the renderer.
+- The frame id cancelled in `onLost`, in the rAF self-catch, and in unmount cleanup must be the **live** frame id. The loop reassigns a local `let raf` every frame (`Studio3D.jsx:314-320`), but `stateRef.current.raf` is set once (`:338`) to the first id and never updated. Keep `stateRef.current.raf = raf` updated inside `animate()` each frame, or cancel the local `raf` directly — never cancel the once-set stale id.
+- Async `setNo3D` calls (rAF catch, `webglcontextlost`) must guard against setState-after-unmount (an `aliveRef`/`let alive` flag set false in cleanup, checked before `setNo3D`). Render semantics: toggling `no3D=true` UNMOUNTS the canvas div/GL block, which triggers the mount-effect cleanup (renderer disposed) — it is not an overlay over a live canvas; the unmount cleanup must therefore stay consistent with that choice.
 - `setNo3D` is the same fallback state used by the availability probe and (optionally) the rAF-loop catch — all three failure modes (no WebGL / init throw / context lost) converge on the existing 2D render panel.
 
 ### Anti-Patterns to Avoid
 - **Disposing `material.map` during per-rebuild teardown.** Destroys shared cached textures → blank/black furniture on next build. (The exact STAB-01/STAB-02 conflict.)
 - **Relying on the Error Boundary to catch rAF-loop throws.** It can't [CITED: react.dev]. Async loop must self-catch.
+- **`setNo3D(false)` on restore without re-running the GL mount effect.** Leaves `no3D=false` pointing at a dead GL context; the `[]`-deps mount effect won't recreate the renderer. Bump a `reinitKey` to force a remount.
+- **Cancelling `stateRef.current.raf` (the once-set first frame id).** It's stale; the loop reassigns a new id each frame. Cancel the live id.
+- **`setNo3D` from an async path after unmount.** setState-after-unmount; guard with an alive flag.
 - **Calling `renderer.forceContextLoss()` on every rebuild.** That's an unmount-only operation; on rebuild you only dispose the group.
 - **Wrapping `<App/>` in `main.jsx` as the only boundary.** Catches the error but the fallback can't be the Studio's 2D panel; prefer a Studio-scoped boundary for a recoverable, in-context fallback.
 - **Forgetting `event.preventDefault()` in `webglcontextlost`.** Permanently dead canvas.
@@ -311,7 +318,7 @@ This phase changes runtime resource lifecycle, not stored data or external servi
 ### Pitfall 2: Async render-loop errors silently white-screen despite a boundary
 **What goes wrong:** A WebGL/driver error thrown inside the `requestAnimationFrame` loop is not caught by the Error Boundary; the loop dies or spams, and the canvas freezes/whitescreens with no fallback.
 **Why it happens:** Boundaries do not catch async callback errors [CITED: react.dev].
-**How to avoid:** try/catch the loop body; on error `cancelAnimationFrame` + set `setNo3D(true)` (local fallback) or re-throw on next render to route to the boundary.
+**How to avoid:** try/catch the loop body; on error `cancelAnimationFrame` (the LIVE frame id) + set `setNo3D(true)` (local fallback, guarded by an alive flag) or re-throw on next render to route to the boundary.
 **Warning signs:** Frozen/blank 3D canvas with no fallback UI and no `componentDidCatch` log; errors only visible in the console.
 
 ### Pitfall 3: Context never restored because `preventDefault()` was omitted
@@ -355,17 +362,17 @@ All examples are inline in Patterns 1-5 above with `[CITED]` sources. Consolidat
 
 **These three assumptions are design/scope choices, not unverified facts.** All API-level claims (disposal, boundary behavior, context-loss) are `[CITED]` from official docs. No compliance/security/retention assumptions exist (none apply — client-only app).
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Context-loss restore strategy: full remount vs in-place rebuild?**
+> Both questions were adopted during planning and are now hard plan criteria. Q1 → Plan 01 Task 3 (key-bump remount via `reinitKey` is a hard acceptance criterion). Q2 → Plan 02 (Error Boundary exposes a "reintentar" reset). Retained for traceability.
+
+1. **Context-loss restore strategy: full remount vs in-place rebuild?** — RESOLVED: **`key`-bump remount.**
    - What we know: on `webglcontextrestored`, all GPU resources are invalid and must be recreated.
-   - What's unclear: whether the planner wants a simple `key`-bump remount of `Viewer3D` (easy, robust) or a finer in-place re-init (less flicker).
-   - Recommendation: default to `key`-bump remount for robustness; it reuses the existing mount-effect setup path. Treat in-place as a later optimization.
+   - Resolution: bump a `reinitKey` applied to a keyed GL subcomponent (or canvas wrapper) so the mount effect (deps `[]`) re-runs and recreates renderer/scene/group. `setNo3D(false)` alone does NOT rebuild GPU resources. This is now a hard acceptance criterion in Plan 01 Task 3 (Warning 1 fix). In-place re-init deferred as a later optimization.
 
-2. **Should the boundary expose a "reintentar" (retry) button?**
+2. **Should the boundary expose a "reintentar" (retry) button?** — RESOLVED: **yes.**
    - What we know: STAB-04 requires a *recoverable* fallback. A reset path makes recovery explicit.
-   - What's unclear: whether "recoverable" is satisfied by navigation-driven remount alone or needs an in-fallback retry control.
-   - Recommendation: include a lightweight "reintentar" that resets `hasError` (and/or bumps a key) — cheap and directly satisfies "recoverable."
+   - Resolution: Plan 02's Error Boundary includes a lightweight "reintentar" that resets `hasError` (and/or bumps a key) — directly satisfies "recoverable."
 
 ## Environment Availability
 

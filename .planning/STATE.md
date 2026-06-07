@@ -1,3 +1,17 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: planning
+last_updated: "2026-06-07T06:08:52.507Z"
+progress:
+  total_phases: 5
+  completed_phases: 0
+  total_plans: 2
+  completed_plans: 0
+  percent: 0
+---
+
 # Project State: reno · vision
 
 > Project memory. Updated at phase/plan transitions and session boundaries.
@@ -25,15 +39,18 @@
 ## Accumulated Context
 
 ### Key Decisions
+
 - Repo git propio inicializado en `renovision/` (antes git resolvía al repo accidental de la home del usuario).
 - Entrega de cotización vía servicio externo (EmailJS/Formspree) + PDF client-side — sin backend propio.
 - Migración a TypeScript pospuesta a v2 (priorizar estabilidad + cobertura).
 - Trabajo por fases ordenado por riesgo: estabilidad → lógica → cotización → red de seguridad → pulido.
 
 ### Open Todos
+
 - None yet.
 
 ### Blockers
+
 - None.
 
 ## Constraints
