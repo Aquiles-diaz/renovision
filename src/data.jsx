@@ -57,7 +57,8 @@ export const FURNITURE = [
     gabinete:["Melamina grafito","Melamina scotch"],
     frentes:["Supreme Melamina scotch","Barcelona PVC perlado gris"],
     specs:["Conformados por cajones smart","No incluye iluminación"],
-    render:{ madera:"/assets/modules/mesatv-madera.png", gris:"/assets/modules/mesatv-gris.png" } },
+    render:{ madera:"/assets/modules/mesatv-madera.png", gris:"/assets/modules/mesatv-gris.png" },
+    spot:{ x:"32%", y:"58%" } },
 
   { id:"vajillero", name:"Vajillero", icon:"sideboard", kind:"doors-shelf",
     widths:[900,1800,2700], defW:1800, alto:1100, prof:500, bayUnit:BAY,
@@ -65,7 +66,8 @@ export const FURNITURE = [
     gabinete:["Melamina grafito","Melamina scotch"],
     frentes:["Supreme Melamina scotch","Vitrina top marco negro vidrio transparente","Barcelona PVC perlado gris"],
     specs:["Conformados por puertas de abrir","Iluminación vertical en laterales (opcional)"],
-    render:{ madera:"/assets/modules/vajillero-madera.png", gris:"/assets/modules/vajillero-gris.png" } },
+    render:{ madera:"/assets/modules/vajillero-madera.png", gris:"/assets/modules/vajillero-gris.png" },
+    spot:{ x:"58%", y:"46%" } },
 
   { id:"consola", name:"Consola", icon:"wardrobe", kind:"doors-drawer",
     widths:[900], defW:900, alto:1500, prof:500, bayUnit:BAY,
@@ -73,7 +75,8 @@ export const FURNITURE = [
     gabinete:["Melamina grafito","Melamina scotch"],
     frentes:["Supreme Melamina scotch","Vitrina top marco negro vidrio transparente","Barcelona PVC perlado gris"],
     specs:["Puertas de abrir + cajón inferior smart","Interior con estantes en melamina","Iluminación vertical en laterales (solo vitrina)"],
-    render:{ madera:"/assets/modules/consola-madera.png", gris:"/assets/modules/consola-gris.png" } },
+    render:{ madera:"/assets/modules/consola-madera.png", gris:"/assets/modules/consola-gris.png" },
+    spot:{ x:"73%", y:"64%" } },
 
   { id:"contenedor", name:"Contenedor", icon:"shelf", kind:"doors-glasstop",
     widths:[900], defW:900, alto:1500, prof:500, bayUnit:BAY,
@@ -81,7 +84,8 @@ export const FURNITURE = [
     gabinete:["Melamina grafito","Melamina scotch"],
     frentes:["Supreme Melamina scotch","Vitrina top marco negro vidrio transparente","Barcelona PVC perlado gris"],
     specs:["Puertas de abrir","Tapa superior de vidrio transparente 6 mm","Interior con estantes en melamina","Iluminación vertical en laterales (solo vitrina)"],
-    render:{ madera:"/assets/modules/contenedor-madera.png", gris:"/assets/modules/contenedor-gris.png" } },
+    render:{ madera:"/assets/modules/contenedor-madera.png", gris:"/assets/modules/contenedor-gris.png" },
+    spot:{ x:"44%", y:"38%" } },
 
   { id:"columna", name:"Columna", icon:"wardrobe", kind:"doors-drawer",
     widths:[900], defW:900, alto:2000, prof:500, bayUnit:BAY,
@@ -89,23 +93,28 @@ export const FURNITURE = [
     gabinete:["Melamina grafito","Melamina scotch"],
     frentes:["Supreme Melamina scotch","Vitrina top marco negro vidrio transparente","Barcelona PVC perlado gris"],
     specs:["Puertas de abrir + cajón inferior smart","Interior con estantes en melamina","Iluminación vertical en laterales (solo vitrina)","Apertura de puertas superiores con perfil Neo"],
-    render:{ madera:"/assets/modules/columna-madera.png", gris:"/assets/modules/columna-gris.png" } },
+    render:{ madera:"/assets/modules/columna-madera.png", gris:"/assets/modules/columna-gris.png" },
+    spot:{ x:"22%", y:"44%" } },
 ];
 
 /* ROOMS — two structures: edificio (tower) + casa */
 export const ROOMS = [
-  { id:"cabina",     struct:"edificio", name:"Cabina",        sub:"Vestidor · walk-in",       floor:5 },
-  { id:"estudio",    struct:"edificio", name:"Estudio",       sub:"Home office",              floor:4 },
-  { id:"comedor",    struct:"edificio", name:"Comedor",       sub:"Living comedor",           floor:4 },
-  { id:"sala",       struct:"edificio", name:"Sala de estar", sub:"Estar principal",          floor:3 },
-  { id:"lavanderia", struct:"edificio", name:"Lavandería",    sub:"Servicio",                 floor:1 },
-  { id:"garaje",     struct:"edificio", name:"Garaje",        sub:"Cochera + guardado",       floor:1 },
-  { id:"dormitorio", struct:"casa",     name:"Dormitorio",    sub:"Suite",                    floor:2 },
-  { id:"recibidor",  struct:"casa",     name:"Recibidor",     sub:"Hall de entrada",          floor:1 },
+  { id:"cabina",     struct:"edificio", name:"Cabina",        sub:"Vestidor · walk-in",       floor:5, furniture:["columna","consola","vajillero"] },
+  { id:"estudio",    struct:"edificio", name:"Estudio",       sub:"Home office",              floor:4, furniture:["columna","consola","contenedor"] },
+  { id:"comedor",    struct:"edificio", name:"Comedor",       sub:"Living comedor",           floor:4, furniture:["vajillero","contenedor","mesatv"] },
+  { id:"sala",       struct:"edificio", name:"Sala de estar", sub:"Estar principal",          floor:3, furniture:["mesatv","contenedor","vajillero"] },
+  { id:"lavanderia", struct:"edificio", name:"Lavandería",    sub:"Servicio",                 floor:1, furniture:["columna","contenedor"] },
+  { id:"garaje",     struct:"edificio", name:"Garaje",        sub:"Cochera + guardado",       floor:1, furniture:["columna","contenedor"] },
+  { id:"dormitorio", struct:"casa",     name:"Dormitorio",    sub:"Suite",                    floor:2, furniture:["columna","consola","vajillero"] },
+  { id:"recibidor",  struct:"casa",     name:"Recibidor",     sub:"Hall de entrada",          floor:1, furniture:["consola","contenedor"] },
 ];
 
-/* todos los módulos EXA disponibles en todos los ambientes */
-export function furnitureForRoom(roomId){ return FURNITURE.slice(); }
+/* muebles de un ambiente: resuelve la lista curada del ROOM contra el catálogo */
+export function furnitureForRoom(roomId){
+  const room = roomById(roomId);
+  if(!room || !room.furniture) return [];
+  return room.furniture.map(furnitureById).filter(Boolean);
+}
 export function roomById(id){ return ROOMS.find(r => r.id === id); }
 export function melaminaById(id){ return MELAMINAS.find(m => m.id === id) || MELAMINAS[0]; }
 export function furnitureById(id){ return FURNITURE.find(f => f.id === id); }

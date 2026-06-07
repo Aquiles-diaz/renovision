@@ -6,11 +6,7 @@ import { furnitureForRoom, computeQuote, fmtAR } from "./data.jsx";
 
 export function RoomView({ room, onBack, onPick, onHome, onMateriales, onStudio }){
   const list = furnitureForRoom(room.id);
-  // stable hotspot positions per room
-  const spots = [
-    { x:"32%", y:"58%" }, { x:"58%", y:"46%" }, { x:"73%", y:"64%" },
-    { x:"44%", y:"38%" }, { x:"22%", y:"44%" },
-  ];
+  const empty = list.length === 0;
 
   return (
     <div className="room fade-in">
@@ -25,16 +21,18 @@ export function RoomView({ room, onBack, onPick, onHome, onMateriales, onStudio 
 
         <button className="room__back" onClick={onBack}>← Volver al edificio</button>
 
-        {list.map((f,i)=>(
+        {list.map(f=>(
           <button key={f.id} className="hotspot"
-            style={{ left:spots[i%spots.length].x, top:spots[i%spots.length].y }}
+            style={{ left:f.spot.x, top:f.spot.y }}
             title={f.name} onClick={()=>onPick(f.id)} />
         ))}
 
         <div className="room__title">
           <span className="tag">{room.struct==="casa"?"Casa":"Edificio"} · ambiente</span>
           <h2>{room.name}</h2>
-          <p>{list.length} muebles disponibles · tocá un punto o elegí a la derecha</p>
+          <p>{empty
+            ? "Sin muebles disponibles en este ambiente"
+            : `${list.length} muebles disponibles · tocá un punto o elegí a la derecha`}</p>
         </div>
       </div>
 
@@ -42,6 +40,8 @@ export function RoomView({ room, onBack, onPick, onHome, onMateriales, onStudio 
         <span className="tag">Elegí un mueble</span>
         <h3>{room.name}</h3>
         <p className="lead">{room.sub}. Seleccioná una pieza para verla en 3D, ajustar medidas y obtener su cotización.</p>
+
+        {empty && <p className="lead">No hay muebles asignados a este ambiente todavía.</p>}
 
         {list.map(f=>{
           const multi = f.widths.length>1;

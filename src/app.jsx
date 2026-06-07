@@ -30,19 +30,22 @@ function writeUrl(next){
   window.history.replaceState(null, "", url);
 }
 
+/* normaliza un deep link inválido antes de inicializar el estado:
+   si pide studio/room sin un ambiente válido, cae a home (sin parpadeo, sin setState en render) */
+function normalizeInit(init){
+  const room = init.room ? roomById(init.room) : null;
+  const needsRoom = init.view === "studio" || init.view === "room";
+  const view = (needsRoom && !room) ? "home" : init.view;
+  return { ...init, view, room };
+}
+
 function App(){
-  const init = readUrl();
+  const init = normalizeInit(readUrl());
   const [view, setView] = useState(init.view);
-  const [room, setRoom] = useState(init.room ? roomById(init.room) : null);
+  const [room, setRoom] = useState(init.room);
   const [furnId, setFurnId] = useState(init.m);
   const [zoom, setZoom] = useState(null);
   const [flash, setFlash] = useState(false);
-
-  // si la URL pedía studio/room pero falta el ambiente, caemos a building
-  if((view === "studio" || view === "room") && !room){
-    // normaliza sin romper render
-    setTimeout(()=>{ setView("building"); }, 0);
-  }
 
   // cinematic: building -> room
   const enterRoom = (r, center)=>{
