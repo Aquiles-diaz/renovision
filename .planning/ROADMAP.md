@@ -53,7 +53,9 @@
   1. El botón de exportar genera un PDF real client-side de la cotización (no un `.html` disfrazado de PDF) (`src/Studio3D.jsx:498-551`).
   2. "Solicitar" envía la cotización al negocio mediante un servicio externo (EmailJS/Formspree/endpoint) y confirma visiblemente el envío al usuario — sin backend propio (`src/Studio3D.jsx:707-715`).
   3. Cada etiqueta de botón describe con precisión su acción real (descargar PDF / solicitar / etc.) — sin promesas engañosas.
-**Plans**: TBD
+**Plans:** 2 plans
+- [ ] 03-01-PLAN.md — downloadDoc → PDF real client-side vía html2pdf (dynamic import) + etiquetas honestas de descarga (QUOTE-01, parte de QUOTE-03; D-01/D-02/D-03/D-08)
+- [ ] 03-02-PLAN.md — Modal de contacto + envío vía EmailJS (config + sendQuote aislado) + CTA honesta "Solicitar cotización →" con estados idle/sending/success/error y fallback sin credenciales (QUOTE-02, parte de QUOTE-03; D-04/D-05/D-06/D-07/D-08)
 **UI hint**: yes
 
 ### Phase 4: Red de seguridad — tests + CI
@@ -84,7 +86,7 @@
 |-------|----------------|--------|-----------|
 | 1. Estabilidad crítica del motor 3D | 0/2 | Planned | - |
 | 2. Corrección de lógica y routing | 3/3 | Complete ✓ | 2026-06-07 |
-| 3. Entrega real de la cotización | 0/0 | Not started | - |
+| 3. Entrega real de la cotización | 0/2 | Planned | - |
 | 4. Red de seguridad — tests + CI | 0/0 | Not started | - |
 | 5. Accesibilidad y pulido | 0/0 | Not started | - |
 
