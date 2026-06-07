@@ -545,6 +545,132 @@ button {
   line-height: 1.5;
 }
 
+/* --- CONTACT MODAL — extiende tokens de .ar-modal__box, dimensionado para formulario (UI-SPEC) --- */
+.contact-modal__box {
+  position: relative;
+  width: min(440px, 94vw);
+  height: auto;
+  max-height: 92vh;
+  overflow-y: auto;
+  background: var(--bg-2);
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  padding: 24px;
+}
+.contact-modal__title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 4px;
+}
+.contact-modal__sub {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  margin: 0 0 24px;
+}
+.contact-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.contact-field__label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-dim);
+}
+.contact-field__input {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink);
+}
+.contact-field__input:focus {
+  outline: none;
+  border-color: var(--ink-dim);
+}
+.contact-field__input::placeholder {
+  color: var(--ink-dim);
+}
+.contact-field__input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.contact-field__textarea {
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+}
+.contact-modal__hint {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  margin: 0;
+}
+.contact-modal__error {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--red);
+  background: var(--panel);
+  border: 1px solid var(--red);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.contact-modal__submit {
+  width: 100%;
+  margin-top: 8px;
+}
+.contact-modal__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+/* éxito: tinta neutra sobre panel — sin verde (UI-SPEC Color) */
+.contact-modal__status {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0;
+}
+.contact-modal__body {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  margin: 0;
+}
+.contact-modal__neutral {
+  align-self: flex-start;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 13px 24px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.contact-modal__neutral:hover {
+  border-color: var(--ink-dim);
+}
+
 /* render-en-ambiente strip below 3D */
 .render {
   flex: 0 0 auto;
