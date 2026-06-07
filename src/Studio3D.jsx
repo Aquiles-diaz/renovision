@@ -495,7 +495,7 @@ export function StudioScreen({
     });
   }
 
-  function downloadDoc(kind) {
+  async function downloadDoc(kind) {
     const leg = LEGS.find((l) => l.id === legId),
       line = LINES.find((l) => l.id === lineId);
     const rows = quote.breakdown
@@ -539,15 +539,21 @@ export function StudioScreen({
       <div class="total"><span>${tech ? "Precio de referencia" : "TOTAL"}</span><b>${fmtAR(quote.total)}</b></div>
       <div class="foot">Documento generado por reno · vision — configurador 3D. Precios de referencia en ARS, sujetos a confirmación. Las medidas pueden ajustarse según relevamiento del ambiente.<br/>reno · 2026</div>
     </body></html>`;
-    const blob = new Blob([html], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `reno-${furniture.id}-${tech ? "ficha-tecnica" : "presupuesto"}.html`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    try {
+      // Lazy-load html2pdf so it stays out of the initial bundle (D-03).
+      const { default: html2pdf } = await import("html2pdf.js");
+      const holder = document.createElement("div");
+      holder.innerHTML = html; // reuse the SAME html string built above (D-01)
+      await html2pdf()
+        .set({
+          filename: `reno-${furniture.id}-${tech ? "ficha-tecnica" : "presupuesto"}.pdf`,
+        })
+        .from(holder)
+        .save();
+    } catch (err) {
+      // A PDF failure must never freeze the button or crash the Studio.
+      console.error("downloadDoc: PDF generation failed", err);
+    }
   }
 
   return (
