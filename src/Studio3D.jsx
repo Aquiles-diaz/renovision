@@ -512,6 +512,10 @@ export function StudioScreen({
   // --- contacto: abrir / cerrar (espejo de openAR/closeAR) ---
   function openContact() {
     setSendState("idle");
+    setCName("");
+    setCEmail("");
+    setCPhone("");
+    setCMessage("");
     setContactOpen(true);
   }
   function closeContact() {
