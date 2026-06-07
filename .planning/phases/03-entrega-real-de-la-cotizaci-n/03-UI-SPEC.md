@@ -47,16 +47,16 @@ Exceptions (pre-existing in stylesheet, reused as-is, NOT introduced by this pha
 
 ## Typography
 
-All roles map to existing `styles.css` conventions (Archivo, uppercase letter-spaced labels, mono numerics). The new modal must NOT introduce new sizes/weights beyond these.
+All roles map to existing `styles.css` conventions (Archivo, uppercase letter-spaced labels, mono numerics). The new modal must NOT introduce new sizes/weights beyond these. **Exactly two weights are permitted: 400 (regular) and 700 (bold).** Title dominance is achieved by size alone (20px vs 12px labels), not by a heavier weight.
 
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
-| Display / modal title | 20px | 800 | 1.2 |
+| Display / modal title | 20px | 700 | 1.2 |
 | Body / input text + status message | 14px | 400 | 1.5 |
 | Label (field labels, eyebrow `.tag`) | 12px | 700 (uppercase, letter-spacing 0.16em) | 1.4 |
 | Button | 12px | 700 (uppercase, letter-spacing 0.16em — matches `.btn`) | 1 |
 
-Weights in use: **400 (regular)** for body/inputs, **700 (bold)** for labels/buttons/title. Numeric total in the email summary (if shown) uses the `.mono` (JetBrains Mono) class already defined.
+Weights in use: **exactly two** — **400 (regular)** for body/inputs, **700 (bold)** for the modal title, labels, and buttons. The modal title is distinguished by its larger size (20px) rather than a third weight. Numeric total in the email summary (if shown) uses the `.mono` (JetBrains Mono) class already defined.
 
 ---
 
@@ -117,6 +117,8 @@ Rationale: documents are now real PDFs (D-01/D-02), so "(PDF)" is honest. "Solic
 | **Error** (error + retry) | Inline error block: `No se pudo enviar tu cotización.` + body `Revisá tu conexión e intentá de nuevo.` + retry button `Reintentar`. **Form data is preserved** (not cleared) so the user retries without re-typing. |
 | Missing-credentials error (defensive) | If EmailJS credentials are absent/misconfigured, show the same Error block with body `El envío no está disponible en este momento. Probá descargar el presupuesto en PDF.` (graceful fallback to the working download path). |
 
+**Control-label note:** `Cerrar` and `Reintentar` are intentionally single-word control labels — acceptable inside a modal where context (the surrounding heading/body copy) supplies the missing object. They are not orphaned verbs. If desired, the executor may use the slightly more explicit pair `Cerrar` / `Reintentar envío`; keeping the single words as-is is also approved.
+
 ### Validation contract (D-06, Claude's discretion on exact regex)
 
 | Field | Rule |
@@ -142,9 +144,9 @@ Rationale: documents are now real PDFs (D-01/D-02), so "(PDF)" is honest. "Solic
 | Open trigger | Click on `Solicitar cotización →` in `.cotizar__actions` (`src/Studio3D.jsx:713`). |
 | Overlay | Reuse `.ar-modal` overlay: `position:fixed; inset:0; z-index:60; background:rgba(0,0,0,.78); backdrop-filter:blur(6px); display:grid; place-items:center; padding:24px`. Click on overlay (outside box) closes the modal — same as AR modal. |
 | Box | Reuse `.ar-modal__box` look: `background:var(--bg-2); border:1px solid var(--line-strong); border-radius:16px`. Size for a form, not a 3D viewer: `width:min(440px,94vw)`, height auto. New class (e.g. `.contact-modal__box`) may extend the same visual tokens rather than literally reusing the AR sizing. |
-| Close | Reuse `.ar-modal__close` button (`✕`, 38×38, top-right) and `e.stopPropagation()` on the box — identical to AR modal. Closing in success/error state is always allowed. |
+| Close | Reuse `.ar-modal__close` button (`✕`, 38×38, top-right) and `e.stopPropagation()` on the box — identical to AR modal. The `✕` button MUST carry `aria-label="Cerrar"` (low-cost; the glyph alone has no accessible name). Closing in success/error state is always allowed. |
 | Ephemeral feedback idiom | Transient confirmations follow the `copyLink`/`setCopied` + `setTimeout(…, 1800)` idiom (e.g. the ephemeral "¡Link copiado!" toast). The success state, however, is a **persistent** in-modal panel (not a 1.8s toast) because the user needs to read it (D-07). |
-| Focus | On open, focus the `Nombre` field. Esc closes (parity with overlay click). (Full a11y/keyboard hardening is Phase 5 scope — do not over-build here, but Esc + autofocus are low-cost and match AR-modal expectations.) |
+| Focus | On open, focus the `Nombre` field. Esc closes (parity with overlay click). (Full a11y/keyboard hardening is Phase 5 scope — do not over-build here, but Esc + autofocus + the close-button `aria-label` are low-cost and match AR-modal expectations.) |
 | State machine | Local `useState` in StudioScreen: `idle → sending → (success | error)`; `error → sending` on Reintentar; closing resets to `idle`. Inputs are controlled state; preserved across error→retry. |
 
 ---
