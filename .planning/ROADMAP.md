@@ -9,7 +9,7 @@
 ## Phases
 
 - [ ] **Phase 1: Estabilidad crítica del motor 3D** - Sin fugas de GPU/memoria, sin pantalla blanca, WebGL tolerante a fallos
-- [ ] **Phase 2: Corrección de lógica y routing** - Sin setState en render, hotspots estables, scoping de sala real
+- [x] **Phase 2: Corrección de lógica y routing** - Sin setState en render, hotspots estables, scoping de sala real
 - [ ] **Phase 3: Entrega real de la cotización** - PDF de verdad, "Solicitar" que envía vía servicio externo, etiquetas honestas
 - [ ] **Phase 4: Red de seguridad — tests + CI** - Cobertura de precios y geometría, pipeline lint + build + tests
 - [ ] **Phase 5: Accesibilidad y pulido** - Labels accesibles, semántica correcta, timers limpios, `dist/` fuera de VCS
@@ -40,9 +40,9 @@
   2. Cada hotspot de la vista de ambiente apunta siempre al mueble correcto mediante un mapeo explícito por dato (no por índice de array con módulo) y no se solapa al agregar un mueble (`src/RoomView.jsx:10-13, 28-32`).
   3. `furnitureForRoom(roomId)` devuelve solo los muebles de esa sala (filtrado real por un campo de datos), no el catálogo completo — la selección de sala tiene efecto observable (`src/data.jsx:108`).
 **Plans:** 3 plans
-- [ ] 01-PLAN.md — Datos como fuente de verdad en data.jsx: membresía mueble↔ambiente (ROOMS.furniture) + spot por mueble + furnitureForRoom filtra real (LOGIC-03, D-01/D-02/D-03)
-- [ ] 02-PLAN.md — Normalización de deep links en el inicializador de estado de app.jsx (normalizeInit puro, sin setState en render, fallback a home) (LOGIC-01, D-05/D-06/D-07)
-- [ ] 03-PLAN.md — Hotspots de RoomView posicionados desde f.spot (sin índice módulo) + empty-state defensivo (LOGIC-02, D-03/D-04)
+- [x] 01-PLAN.md — Datos como fuente de verdad en data.jsx: membresía mueble↔ambiente (ROOMS.furniture) + spot por mueble + furnitureForRoom filtra real (LOGIC-03, D-01/D-02/D-03)
+- [x] 02-PLAN.md — Normalización de deep links en el inicializador de estado de app.jsx (normalizeInit puro, sin setState en render, fallback a home) (LOGIC-01, D-05/D-06/D-07)
+- [x] 03-PLAN.md — Hotspots de RoomView posicionados desde f.spot (sin índice módulo) + empty-state defensivo (LOGIC-02, D-03/D-04)
 **UI hint**: yes
 
 ### Phase 3: Entrega real de la cotización
@@ -83,7 +83,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Estabilidad crítica del motor 3D | 0/2 | Planned | - |
-| 2. Corrección de lógica y routing | 0/3 | Planned | - |
+| 2. Corrección de lógica y routing | 3/3 | Complete ✓ | 2026-06-07 |
 | 3. Entrega real de la cotización | 0/0 | Not started | - |
 | 4. Red de seguridad — tests + CI | 0/0 | Not started | - |
 | 5. Accesibilidad y pulido | 0/0 | Not started | - |

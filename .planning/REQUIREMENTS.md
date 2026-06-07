@@ -19,9 +19,9 @@ Requisitos de este milestone. Cada uno mapea a una fase del roadmap.
 
 ### Lógica y routing (LOGIC)
 
-- [ ] **LOGIC-01**: La normalización de deep links no usa setState durante el render (se mueve a un efecto), sin warnings de React ni renders inconsistentes
-- [ ] **LOGIC-02**: Los hotspots de la vista de ambiente se mapean de forma estable y explícita (no por índice con módulo), apuntando siempre al mueble correcto
-- [ ] **LOGIC-03**: `furnitureForRoom(roomId)` filtra realmente los muebles por sala en vez de ignorar el argumento
+- [x] **LOGIC-01**: La normalización de deep links no usa setState durante el render (se mueve a un efecto), sin warnings de React ni renders inconsistentes
+- [x] **LOGIC-02**: Los hotspots de la vista de ambiente se mapean de forma estable y explícita (no por índice con módulo), apuntando siempre al mueble correcto
+- [x] **LOGIC-03**: `furnitureForRoom(roomId)` filtra realmente los muebles por sala en vez de ignorar el argumento
 
 ### Entrega de la cotización (QUOTE)
 
@@ -73,9 +73,9 @@ Qué fases cubren qué requisitos. Confirmado al crear el roadmap (ver `.plannin
 | STAB-03 | Phase 1 | Pending |
 | STAB-04 | Phase 1 | Pending |
 | STAB-05 | Phase 1 | Pending |
-| LOGIC-01 | Phase 2 | Pending |
-| LOGIC-02 | Phase 2 | Pending |
-| LOGIC-03 | Phase 2 | Pending |
+| LOGIC-01 | Phase 2 | Complete |
+| LOGIC-02 | Phase 2 | Complete |
+| LOGIC-03 | Phase 2 | Complete |
 | QUOTE-01 | Phase 3 | Pending |
 | QUOTE-02 | Phase 3 | Pending |
 | QUOTE-03 | Phase 3 | Pending |
