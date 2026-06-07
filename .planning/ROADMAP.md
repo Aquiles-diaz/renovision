@@ -39,7 +39,10 @@
   1. Abrir un deep link inválido (`studio`/`room` sin sala resuelta) normaliza la vista sin warnings de React ni flash visible — la normalización vive en un efecto o en el inicializador de estado, no en el cuerpo del render (`src/app.jsx:42-45`).
   2. Cada hotspot de la vista de ambiente apunta siempre al mueble correcto mediante un mapeo explícito por dato (no por índice de array con módulo) y no se solapa al agregar un mueble (`src/RoomView.jsx:10-13, 28-32`).
   3. `furnitureForRoom(roomId)` devuelve solo los muebles de esa sala (filtrado real por un campo de datos), no el catálogo completo — la selección de sala tiene efecto observable (`src/data.jsx:108`).
-**Plans**: TBD
+**Plans:** 3 plans
+- [ ] 01-PLAN.md — Datos como fuente de verdad en data.jsx: membresía mueble↔ambiente (ROOMS.furniture) + spot por mueble + furnitureForRoom filtra real (LOGIC-03, D-01/D-02/D-03)
+- [ ] 02-PLAN.md — Normalización de deep links en el inicializador de estado de app.jsx (normalizeInit puro, sin setState en render, fallback a home) (LOGIC-01, D-05/D-06/D-07)
+- [ ] 03-PLAN.md — Hotspots de RoomView posicionados desde f.spot (sin índice módulo) + empty-state defensivo (LOGIC-02, D-03/D-04)
 **UI hint**: yes
 
 ### Phase 3: Entrega real de la cotización
@@ -80,7 +83,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Estabilidad crítica del motor 3D | 0/2 | Planned | - |
-| 2. Corrección de lógica y routing | 0/0 | Not started | - |
+| 2. Corrección de lógica y routing | 0/3 | Planned | - |
 | 3. Entrega real de la cotización | 0/0 | Not started | - |
 | 4. Red de seguridad — tests + CI | 0/0 | Not started | - |
 | 5. Accesibilidad y pulido | 0/0 | Not started | - |
