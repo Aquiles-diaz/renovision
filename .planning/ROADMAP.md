@@ -26,7 +26,9 @@
   3. Salir del Studio (Home/Back) con el modal AR abierto revoca el blob URL del GLB exportado — no quedan object URLs colgando (`src/Studio3D.jsx:472-489`).
   4. Un error en el render 3D muestra un fallback recuperable (ej. render 2D existente + mensaje), no una pantalla blanca de toda la SPA — hay un Error Boundary que envuelve el Studio/Viewer (`src/main.jsx`, `src/app.jsx`).
   5. En un navegador sin WebGL o ante context-loss, la creación del `WebGLRenderer` no crashea la app: se captura el fallo y degrada al panel 2D (`src/Studio3D.jsx:259-268`).
-**Plans**: TBD
+**Plans:** 2 plans
+- [ ] 01-PLAN.md — Endurecimiento del motor 3D en Studio3D.jsx: dispose por reconstrucción + cache de texturas (STAB-01/02), revoke de blob AR (STAB-03), WebGLRenderer robusto + context-loss + auto-captura del loop rAF (STAB-05 + parte async de STAB-04)
+- [ ] 02-PLAN.md — Error Boundary de clase (ErrorBoundary.jsx) + wrap del Studio en app.jsx para fallback recuperable ante throws síncronos (parte síncrona de STAB-04)
 **UI hint**: yes
 
 ### Phase 2: Corrección de lógica y routing
@@ -77,7 +79,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Estabilidad crítica del motor 3D | 0/0 | Not started | - |
+| 1. Estabilidad crítica del motor 3D | 0/2 | Planned | - |
 | 2. Corrección de lógica y routing | 0/0 | Not started | - |
 | 3. Entrega real de la cotización | 0/0 | Not started | - |
 | 4. Red de seguridad — tests + CI | 0/0 | Not started | - |
