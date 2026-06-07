@@ -711,10 +711,10 @@ export function StudioScreen({
           </div>
           <div className="cotizar__actions">
             <button className="dlbtn" onClick={() => downloadDoc("tecnico")}>
-              ↓ PDF Técnico
+              ↓ Descargar ficha técnica (PDF)
             </button>
             <button className="dlbtn" onClick={() => downloadDoc("presupuesto")}>
-              ↓ Presupuesto
+              ↓ Descargar presupuesto (PDF)
             </button>
             <button className="btn btn--red" onClick={() => downloadDoc("presupuesto")}>
               Solicitar →
