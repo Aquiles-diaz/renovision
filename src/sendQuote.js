@@ -13,18 +13,24 @@ import emailjs from "@emailjs/browser";
 import {
   EMAILJS_SERVICE_ID,
   EMAILJS_TEMPLATE_ID,
+  EMAILJS_TEMPLATE_CLIENT_ID,
   EMAILJS_PUBLIC_KEY,
 } from "./emailjs.config.js";
 
 export async function sendQuote(params) {
-  // Degradación controlada: si falta cualquier credencial, no intentamos la
-  // llamada de red — lanzamos un error tipado que el modal traduce al mensaje
-  // "el envío no está disponible… descargá el PDF" (T-03-04 / UI-SPEC).
   if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
     throw new Error("EMAILJS_NOT_CONFIGURED");
   }
 
-  return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params, {
+  // Mail al negocio (siempre)
+  await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params, {
     publicKey: EMAILJS_PUBLIC_KEY,
   });
+
+  // Confirmación al cliente (solo si está configurado y el cliente dejó email)
+  if (EMAILJS_TEMPLATE_CLIENT_ID && params.email) {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_CLIENT_ID, params, {
+      publicKey: EMAILJS_PUBLIC_KEY,
+    });
+  }
 }
