@@ -646,7 +646,7 @@ export function StudioScreen({
         .save();
     } catch (err) {
       // A PDF failure must never freeze the button or crash the Studio.
-      console.error("downloadDoc: PDF generation failed", err);
+      if (import.meta.env.DEV) console.error("downloadDoc: PDF generation failed", err);
     } finally {
       setDlLoading(false);
     }
