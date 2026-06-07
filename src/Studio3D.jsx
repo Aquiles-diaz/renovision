@@ -443,6 +443,7 @@ export function StudioScreen({
   const [imgErr, setImgErr] = useState(false);
   const [arUrl, setArUrl] = useState(null);
   const [arLoading, setArLoading] = useState(false);
+  const [dlLoading, setDlLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
   // --- contacto / envío de cotización (EmailJS) ---
@@ -580,6 +581,8 @@ export function StudioScreen({
   }
 
   async function downloadDoc(kind) {
+    if (dlLoading) return;
+    setDlLoading(true);
     const leg = LEGS.find((l) => l.id === legId) ?? LEGS[0],
       line = LINES.find((l) => l.id === lineId) ?? LINES[0];
     const rows = quote.breakdown
@@ -637,6 +640,8 @@ export function StudioScreen({
     } catch (err) {
       // A PDF failure must never freeze the button or crash the Studio.
       console.error("downloadDoc: PDF generation failed", err);
+    } finally {
+      setDlLoading(false);
     }
   }
 
@@ -794,10 +799,14 @@ export function StudioScreen({
             </span>
           </div>
           <div className="cotizar__actions">
-            <button className="dlbtn" onClick={() => downloadDoc("tecnico")}>
+            <button className="dlbtn" onClick={() => downloadDoc("tecnico")} disabled={dlLoading}>
               ↓ Descargar ficha técnica (PDF)
             </button>
-            <button className="dlbtn" onClick={() => downloadDoc("presupuesto")}>
+            <button
+              className="dlbtn"
+              onClick={() => downloadDoc("presupuesto")}
+              disabled={dlLoading}
+            >
               ↓ Descargar presupuesto (PDF)
             </button>
             <button className="btn btn--red" onClick={openContact}>
