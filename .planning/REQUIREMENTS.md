@@ -64,7 +64,7 @@ Reconocidos pero diferidos — no en este roadmap.
 
 ## Traceability
 
-Qué fases cubren qué requisitos. Se completa al crear el roadmap.
+Qué fases cubren qué requisitos. Confirmado al crear el roadmap (ver `.planning/ROADMAP.md`).
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
@@ -94,4 +94,4 @@ Qué fases cubren qué requisitos. Se completa al crear el roadmap.
 
 ---
 *Requirements defined: 2026-06-07*
-*Last updated: 2026-06-07 after initial definition*
+*Last updated: 2026-06-07 after roadmap creation (traceability confirmed, 5 phases, 18/18 mapped)*
