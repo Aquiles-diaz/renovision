@@ -15,6 +15,7 @@ import {
   computeQuote,
   fmtAR,
 } from "./data.jsx";
+import { sendQuote } from "./sendQuote.js";
 
 /* --- simple line icons (rectangles/lines only) --- */
 export function FIcon({ type }) {
@@ -444,6 +445,18 @@ export function StudioScreen({
   const [arLoading, setArLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  // --- contacto / envío de cotización (EmailJS) ---
+  const [contactOpen, setContactOpen] = useState(false);
+  const [cName, setCName] = useState("");
+  const [cEmail, setCEmail] = useState("");
+  const [cPhone, setCPhone] = useState("");
+  const [cMessage, setCMessage] = useState("");
+  // "idle" | "sending" | "success" | "error"
+  const [sendState, setSendState] = useState("idle");
+  // "config" (creds faltantes) | "generic" — distingue el copy del error
+  const [errorKind, setErrorKind] = useState("generic");
+  const nameInputRef = useRef(null);
+
   // reset ancho al cambiar de módulo
   useEffect(() => {
     setWidth(furniture.defW);
@@ -493,6 +506,77 @@ export function StudioScreen({
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     });
+  }
+
+  // --- contacto: abrir / cerrar (espejo de openAR/closeAR) ---
+  function openContact() {
+    setSendState("idle");
+    setContactOpen(true);
+  }
+  function closeContact() {
+    setContactOpen(false);
+    setSendState("idle");
+  }
+
+  // autofocus en "Nombre" + Esc cierra (paridad con el modal AR; UI-SPEC)
+  useEffect(() => {
+    if (!contactOpen) return undefined;
+    const t = setTimeout(() => nameInputRef.current?.focus(), 0);
+    const onKey = (e) => {
+      if (e.key === "Escape") closeContact();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [contactOpen]);
+
+  // --- validación (UI-SPEC: discreción de Claude sobre el regex exacto) ---
+  const nameValid = cName.trim().length > 0;
+  const emailValid = cEmail.trim() === "" ? false : /^\S+@\S+\.\S+$/.test(cEmail.trim());
+  const phoneDigits = cPhone.replace(/[\s+\-]/g, "").replace(/\D/g, "");
+  const phoneValid = cPhone.trim() === "" ? false : phoneDigits.length >= 8;
+  // habilitar envío: nombre válido Y (email válido O teléfono válido)
+  const canSend = nameValid && (emailValid || phoneValid);
+
+  async function submitContact(e) {
+    if (e) e.preventDefault();
+    if (!canSend || sendState === "sending") return;
+    setSendState("sending");
+
+    const cap = (s, n) => (s || "").trim().slice(0, n);
+    const leg = LEGS.find((l) => l.id === legId);
+    const line = LINES.find((l) => l.id === lineId);
+
+    // T-03-02: recortar y limitar longitud; sin construir HTML acá.
+    const params = {
+      name: cap(cName, 120),
+      email: cap(cEmail, 160),
+      phone: cap(cPhone, 40),
+      message: cap(cMessage, 1000),
+      // resumen de configuración
+      mueble: furniture.name,
+      sala: room.name,
+      linea: line ? line.name : lineId,
+      ancho: `${width} mm`,
+      alto: `${furniture.alto} mm`,
+      profundidad: `${furniture.prof} mm`,
+      cuerpos: String(quote.bays),
+      melamina: `${mat.name} · ${mat.finish}`,
+      patas: leg ? leg.name : legId,
+      total: fmtAR(quote.total),
+      // link compartible — misma fuente que copyLink (D-05); NO se construye uno nuevo
+      link: window.location.href,
+    };
+
+    try {
+      await sendQuote(params);
+      setSendState("success");
+    } catch (err) {
+      setErrorKind(err && err.message === "EMAILJS_NOT_CONFIGURED" ? "config" : "generic");
+      setSendState("error"); // los campos NO se limpian: el usuario reintenta sin re-tipear
+    }
   }
 
   async function downloadDoc(kind) {
@@ -716,8 +800,8 @@ export function StudioScreen({
             <button className="dlbtn" onClick={() => downloadDoc("presupuesto")}>
               ↓ Descargar presupuesto (PDF)
             </button>
-            <button className="btn btn--red" onClick={() => downloadDoc("presupuesto")}>
-              Solicitar →
+            <button className="btn btn--red" onClick={openContact}>
+              Solicitar cotización →
             </button>
           </div>
         </div>
@@ -866,6 +950,120 @@ export function StudioScreen({
               {furniture.name} · {mat.name}. Tocá el ícono de AR para verlo a escala real en tu
               ambiente (Android / visores compatibles).
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* CONTACT MODAL — reusa overlay .ar-modal + tokens .ar-modal__box (UI-SPEC / D-06) */}
+      {contactOpen && (
+        <div className="ar-modal" onClick={closeContact}>
+          <div className="contact-modal__box" onClick={(e) => e.stopPropagation()}>
+            <button className="ar-modal__close" aria-label="Cerrar" onClick={closeContact}>
+              ✕
+            </button>
+
+            {sendState === "success" ? (
+              <div className="contact-modal__status">
+                <h3 className="contact-modal__title">✓ ¡Cotización enviada!</h3>
+                <p className="contact-modal__body">
+                  Te contactamos pronto. Revisá tu casilla.
+                </p>
+                <button type="button" className="contact-modal__neutral" onClick={closeContact}>
+                  Cerrar
+                </button>
+              </div>
+            ) : (
+              <form className="contact-modal__form" onSubmit={submitContact}>
+                <h3 className="contact-modal__title">Solicitá tu cotización</h3>
+                <p className="contact-modal__sub">
+                  Te enviamos esta configuración y un asesor te contacta.
+                </p>
+
+                <label className="contact-field">
+                  <span className="contact-field__label">Nombre *</span>
+                  <input
+                    ref={nameInputRef}
+                    className="contact-field__input"
+                    type="text"
+                    value={cName}
+                    placeholder="Tu nombre"
+                    disabled={sendState === "sending"}
+                    onChange={(e) => setCName(e.target.value)}
+                  />
+                </label>
+
+                <label className="contact-field">
+                  <span className="contact-field__label">Email</span>
+                  <input
+                    className="contact-field__input"
+                    type="email"
+                    value={cEmail}
+                    placeholder="tu@email.com"
+                    disabled={sendState === "sending"}
+                    onChange={(e) => setCEmail(e.target.value)}
+                  />
+                </label>
+
+                <label className="contact-field">
+                  <span className="contact-field__label">Teléfono</span>
+                  <input
+                    className="contact-field__input"
+                    type="tel"
+                    value={cPhone}
+                    placeholder="+54 9 ..."
+                    disabled={sendState === "sending"}
+                    onChange={(e) => setCPhone(e.target.value)}
+                  />
+                </label>
+
+                <label className="contact-field">
+                  <span className="contact-field__label">Mensaje (opcional)</span>
+                  <textarea
+                    className="contact-field__input contact-field__textarea"
+                    value={cMessage}
+                    placeholder="Contanos algo más…"
+                    rows={3}
+                    disabled={sendState === "sending"}
+                    onChange={(e) => setCMessage(e.target.value)}
+                  />
+                </label>
+
+                <p className="contact-modal__hint">
+                  Dejanos al menos un email o teléfono para poder responderte.
+                </p>
+
+                {sendState === "error" && (
+                  <div className="contact-modal__error" role="alert">
+                    {errorKind === "config" ? (
+                      <>
+                        <strong>No se pudo enviar tu cotización.</strong>
+                        <br />
+                        El envío no está disponible en este momento. Probá descargar el
+                        presupuesto en PDF.
+                      </>
+                    ) : (
+                      <>
+                        <strong>No se pudo enviar tu cotización.</strong>
+                        <br />
+                        Revisá tu conexión e intentá de nuevo.
+                      </>
+                    )}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  className="btn btn--red contact-modal__submit"
+                  disabled={!canSend || sendState === "sending"}
+                >
+                  {sendState === "sending"
+                    ? "Enviando…"
+                    : sendState === "error"
+                      ? "Reintentar"
+                      : "Enviar cotización →"}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       )}
