@@ -528,7 +528,10 @@ export function StudioScreen({
     if (!contactOpen) return undefined;
     const t = setTimeout(() => nameInputRef.current?.focus(), 0);
     const onKey = (e) => {
-      if (e.key === "Escape") closeContact();
+      if (e.key === "Escape") {
+        setContactOpen(false);
+        setSendState("idle");
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => {
