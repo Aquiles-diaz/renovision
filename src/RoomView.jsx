@@ -1,7 +1,7 @@
 /* ============ reno · vision — ROOM VIEW ============ */
 import React from "react";
 import { RenoNav } from "./Nav.jsx";
-import { FIcon } from "./Studio3D.jsx";
+import { FIcon } from "./studio/FIcon.jsx";
 import { furnitureForRoom, computeQuote, fmtAR } from "./data.jsx";
 
 export function RoomView({ room, onBack, onPick, onHome, onMateriales, onStudio }){
