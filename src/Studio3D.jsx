@@ -580,8 +580,8 @@ export function StudioScreen({
   }
 
   async function downloadDoc(kind) {
-    const leg = LEGS.find((l) => l.id === legId),
-      line = LINES.find((l) => l.id === lineId);
+    const leg = LEGS.find((l) => l.id === legId) ?? LEGS[0],
+      line = LINES.find((l) => l.id === lineId) ?? LINES[0];
     const rows = quote.breakdown
       .map(
         (b) =>
