@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-06-07T07:40:09.326Z"
+last_updated: "2026-06-07T07:50:38.382Z"
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 7
-  completed_plans: 4
-  percent: 20
+  completed_plans: 5
+  percent: 40
 ---
 
 # Project State: reno · vision
@@ -25,19 +25,25 @@ progress:
 
 ## Current Position
 
-Phase: 03 (entrega-real-de-la-cotizaci-n) — EXECUTING
-Plan: 2 of 2
+Phase: 03 (entrega-real-de-la-cotizaci-n) — COMPLETE (2/2 plans)
+Plan: 2 of 2 — done
 
-- **Phase:** 1 — Estabilidad crítica del motor 3D
-- **Plan:** None yet (run `/gsd:plan-phase 1`)
-- **Status:** Executing Phase 03
-- **Progress:** [          ] 0/5 phases complete
+- **Phase:** 03 — Entrega real de la cotización (complete)
+- **Plan:** 03-02 complete (modal de contacto + envío vía EmailJS)
+- **Status:** Phase 03 complete — ready to plan Phase 04
+- **Progress:** [████      ] 2/5 phases complete
 
 ## Performance Metrics
 
-- Phases complete: 0/5
-- Plans complete: 0/0
-- Requirements delivered: 0/18
+- Phases complete: 2/5
+- Plans complete: 5/7
+- Requirements delivered: QUOTE-01, QUOTE-02, QUOTE-03 (this phase)
+
+### Execution Metrics
+
+| Phase | Plan | Duration | Tasks | Files |
+| ----- | ---- | -------- | ----- | ----- |
+| 03    | 02   | ~6 min   | 3     | 6     |
 
 ## Accumulated Context
 
@@ -47,10 +53,12 @@ Plan: 2 of 2
 - Entrega de cotización vía servicio externo (EmailJS/Formspree) + PDF client-side — sin backend propio.
 - Migración a TypeScript pospuesta a v2 (priorizar estabilidad + cobertura).
 - Trabajo por fases ordenado por riesgo: estabilidad → lógica → cotización → red de seguridad → pulido.
+- D-04/D-05: envío vía EmailJS (`@emailjs/browser`), una sola llamada de red aislada en `src/sendQuote.js`; el correo lleva contacto + resumen + link, NO adjunta el PDF; public key no es secreta por diseño.
+- D-07: éxito/error son paneles persistentes en el modal (no toasts de 1.8s).
 
 ### Open Todos
 
-- None yet.
+- **[setup]** Pegar credenciales reales de EmailJS en `src/emailjs.config.js` (Service ID / Template ID / Public Key) y crear la plantilla de email con las 15 variables esperadas — requerido para que el envío funcione end-to-end.
 
 ### Blockers
 
@@ -65,8 +73,9 @@ Plan: 2 of 2
 
 ## Session Continuity
 
-- **Last action:** Ejecutado Plan 03-01 — `downloadDoc` genera PDF real vía html2pdf.js (carga diferida) y los botones de descarga llevan etiquetas honestas "(PDF)". QUOTE-01 y la mitad de QUOTE-03 (descarga) cubiertas.
-- **Next step:** Ejecutar Plan 03-02 (modal de contacto + envío vía EmailJS, "Solicitar").
+- **Last action:** Ejecutado Plan 03-02 — modal de contacto que envía la cotización (contacto + resumen de config + link compartible, sin adjuntar PDF) al negocio vía EmailJS, con máquina de estados idle/sending/success/error, reintento sin pérdida de datos y degradación elegante cuando faltan credenciales. CTA honesta "Solicitar cotización →". QUOTE-02 y la mitad CTA de QUOTE-03 cubiertas. Phase 03 completa (2/2).
+- **Pending user setup:** Pegar Service ID / Template ID / Public Key reales en `src/emailjs.config.js` y crear la plantilla de EmailJS (variables: name, email, phone, message, mueble, sala, linea, ancho, alto, profundidad, cuerpos, melamina, patas, total, link) para envío end-to-end.
+- **Next step:** Planificar Phase 04 (`/gsd:plan-phase 4`).
 
 ---
 *State initialized: 2026-06-07*

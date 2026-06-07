@@ -26,8 +26,8 @@ Requisitos de este milestone. Cada uno mapea a una fase del roadmap.
 ### Entrega de la cotización (QUOTE)
 
 - [ ] **QUOTE-01**: El botón de exportar genera un PDF real de la cotización en el navegador (no un archivo .html disfrazado)
-- [ ] **QUOTE-02**: "Solicitar" envía la cotización al negocio mediante un servicio externo (EmailJS/Formspree/endpoint) y confirma al usuario el envío
-- [ ] **QUOTE-03**: Las etiquetas de los botones describen con precisión lo que hacen (sin promesas falsas)
+- [x] **QUOTE-02**: "Solicitar" envía la cotización al negocio mediante un servicio externo (EmailJS/Formspree/endpoint) y confirma al usuario el envío
+- [x] **QUOTE-03**: Las etiquetas de los botones describen con precisión lo que hacen (sin promesas falsas)
 
 ### Red de seguridad: tests + CI (SAFETY)
 
@@ -77,8 +77,8 @@ Qué fases cubren qué requisitos. Confirmado al crear el roadmap (ver `.plannin
 | LOGIC-02 | Phase 2 | Complete |
 | LOGIC-03 | Phase 2 | Complete |
 | QUOTE-01 | Phase 3 | Pending |
-| QUOTE-02 | Phase 3 | Pending |
-| QUOTE-03 | Phase 3 | Pending |
+| QUOTE-02 | Phase 3 | Complete |
+| QUOTE-03 | Phase 3 | Complete |
 | SAFETY-01 | Phase 4 | Pending |
 | SAFETY-02 | Phase 4 | Pending |
 | SAFETY-03 | Phase 4 | Pending |
