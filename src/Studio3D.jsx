@@ -543,7 +543,7 @@ export function StudioScreen({
   // --- validación (UI-SPEC: discreción de Claude sobre el regex exacto) ---
   const nameValid = cName.trim().length > 0;
   const emailValid = cEmail.trim() === "" ? false : /^\S+@\S+\.\S+$/.test(cEmail.trim());
-  const phoneDigits = cPhone.replace(/[\s+\-]/g, "").replace(/\D/g, "");
+  const phoneDigits = cPhone.replace(/\D/g, "");
   const phoneValid = cPhone.trim() === "" ? false : phoneDigits.length >= 8;
   // habilitar envío: nombre válido Y (email válido O teléfono válido)
   const canSend = nameValid && (emailValid || phoneValid);
