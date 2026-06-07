@@ -13,6 +13,7 @@ must_haves:
     - "A deep link whose room id does not exist falls back to home"
     - "Routing normalization happens in the state initializer, not in the render body, and uses no setState/setTimeout during render"
     - "The cinematic building→room transition (enterRoom) and shareable-URL behavior remain intact"
+    - "Cubre D-05, D-06, D-07 (CONTEXT.md): normalización en el inicializador, ambos casos inválidos (room ausente y room id inexistente) y fallback a home"
   artifacts:
     - path: "src/app.jsx"
       provides: "Pure normalizeInit over readUrl() feeding useState; no setView during render"
@@ -104,4 +105,5 @@ Deep-link normalization lives in a pure state initializer, both invalid cases (m
 
 <output>
 Create `.planning/phases/02-correcci-n-de-l-gica-y-routing/02-02-SUMMARY.md` when done
+</output>
 </output>

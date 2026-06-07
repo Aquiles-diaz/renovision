@@ -13,6 +13,7 @@ must_haves:
     - "Adding a furniture item to a room does not cause hotspot overlap (positions come from data, not array index modulo)"
     - "A room with zero furniture renders a defensive empty-state message instead of an empty stage"
     - "Clicking a hotspot calls onPick with that furniture's id"
+    - "Cubre D-03, D-04 (CONTEXT.md): hotspots posicionados desde f.spot (sin índice módulo) y empty-state defensivo cuando un ambiente queda sin muebles"
   artifacts:
     - path: "src/RoomView.jsx"
       provides: "Hotspots rendered from f.spot; index-modulo positioning removed; empty-state message"
@@ -105,4 +106,5 @@ Every hotspot is positioned from its own furniture's `spot` and targets that fur
 
 <output>
 Create `.planning/phases/02-correcci-n-de-l-gica-y-routing/02-03-SUMMARY.md` when done
+</output>
 </output>

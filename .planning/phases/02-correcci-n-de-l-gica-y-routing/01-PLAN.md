@@ -13,6 +13,7 @@ must_haves:
     - "Two different rooms return different furniture lists (observable filtering)"
     - "An unknown or membership-less room id returns an empty list, never a crash"
     - "Each FURNITURE item carries a distinct spot:{x,y} coordinate consumed downstream by RoomView"
+    - "Cubre D-01, D-02, D-03 (CONTEXT.md): membresía mueble↔ambiente en ROOMS, mapeo curado, campo spot por mueble y furnitureForRoom real"
   artifacts:
     - path: "src/data.jsx"
       provides: "ROOMS with per-room furniture id lists, FURNITURE with spot fields, real furnitureForRoom filter"
@@ -78,11 +79,11 @@ Output: Updated `src/data.jsx` with `ROOMS[].furniture`, `FURNITURE[].spot`, and
     Replace the body of `furnitureForRoom(roomId)` so it resolves the room via `roomById(roomId)`, and if the room is missing or has no `furniture` list returns an empty array; otherwise maps `room.furniture` through `furnitureById` and filters out any unresolved (falsy) ids before returning. It must no longer return `FURNITURE.slice()` or any whole-catalog form. Keep the function pure and reuse the existing `roomById`/`furnitureById` helpers rather than re-implementing lookups.
   </action>
   <verify>
-    <automated>node --input-type=module -e "import('./src/data.jsx').then(d=>{const sala=d.furnitureForRoom('sala').map(f=>f.id);const com=d.furnitureForRoom('comedor').map(f=>f.id);if(JSON.stringify(sala)===JSON.stringify(com))throw new Error('rooms not distinct');if(d.furnitureForRoom('nope').length!==0)throw new Error('unknown room not empty');if(sala.length!==3)throw new Error('sala wrong count');console.log('ok',sala,com);})"</automated>
+    <automated>cp src/data.jsx ./_verify_data.mjs && node --input-type=module -e "import('./_verify_data.mjs').then(m=>{ const sala=m.furnitureForRoom('sala').map(f=>f.id); const cabina=m.furnitureForRoom('cabina').map(f=>f.id); const bad=m.furnitureForRoom('inexistente'); const spotsOk=m.furnitureForRoom('sala').every(f=>f.spot&&f.spot.x&&f.spot.y); if(JSON.stringify(sala)===JSON.stringify(cabina)) throw new Error('rooms not distinct'); if(bad.length!==0) throw new Error('unknown room not empty'); if(!spotsOk) throw new Error('missing spot'); console.log('data assertions ok'); })" ; rm -f ./_verify_data.mjs && npm run build</automated>
   </verify>
   <acceptance_criteria>
-    - `furnitureForRoom('sala')` and `furnitureForRoom('comedor')` return different id sets (observable filtering, LOGIC-03).
-    - `furnitureForRoom('nonexistent')` returns `[]` (length 0), no throw.
+    - `furnitureForRoom('sala')` and `furnitureForRoom('cabina')` return different id sets (observable filtering, LOGIC-03).
+    - `furnitureForRoom('inexistente')` returns `[]` (length 0), no throw.
     - The returned array contains resolved FURNITURE objects (each has `.id` and `.spot`), not raw id strings.
     - The function body references `roomById` and `furnitureById` and contains no `FURNITURE.slice` and no whole-catalog return.
     - `npm run build` exits 0.
@@ -120,4 +121,5 @@ ROOMS carry curated `furniture` id lists, FURNITURE items carry distinct `spot:{
 
 <output>
 Create `.planning/phases/02-correcci-n-de-l-gica-y-routing/02-01-SUMMARY.md` when done
+</output>
 </output>
