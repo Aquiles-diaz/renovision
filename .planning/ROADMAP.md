@@ -54,7 +54,7 @@
   2. "Solicitar" envía la cotización al negocio mediante un servicio externo (EmailJS/Formspree/endpoint) y confirma visiblemente el envío al usuario — sin backend propio (`src/Studio3D.jsx:707-715`).
   3. Cada etiqueta de botón describe con precisión su acción real (descargar PDF / solicitar / etc.) — sin promesas engañosas.
 **Plans:** 2 plans
-- [ ] 03-01-PLAN.md — downloadDoc → PDF real client-side vía html2pdf (dynamic import) + etiquetas honestas de descarga (QUOTE-01, parte de QUOTE-03; D-01/D-02/D-03/D-08)
+- [x] 03-01-PLAN.md — downloadDoc → PDF real client-side vía html2pdf (dynamic import) + etiquetas honestas de descarga (QUOTE-01, parte de QUOTE-03; D-01/D-02/D-03/D-08)
 - [ ] 03-02-PLAN.md — Modal de contacto + envío vía EmailJS (config + sendQuote aislado) + CTA honesta "Solicitar cotización →" con estados idle/sending/success/error y fallback sin credenciales (QUOTE-02, parte de QUOTE-03; D-04/D-05/D-06/D-07/D-08)
 **UI hint**: yes
 
